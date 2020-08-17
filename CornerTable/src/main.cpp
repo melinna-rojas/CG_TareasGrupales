@@ -6,6 +6,7 @@
 #include <string>
 #include <fstream>
 
+#define GLEW_STATIC
 #include <GL/glew.h>
 
 // Incluir GLFW
@@ -179,10 +180,10 @@ void init(GLFWwindow *window)
     //	Ubicacion de puntos
     ubicarCoordenada(vertexList1, cantidadPuntos, punto1x, punto1y, puntoCercano1);
     ubicarCoordenada(vertexList1, cantidadPuntos, punto2x, punto2y, puntoCercano2);
-    cout << "[" << punto1x << " - " << punto1y << "]";
-    cout << " - Es cercano a el punto " << puntoCercano1 << endl;
-    cout << "[" << punto2x << " - " << punto2y << "]";
-    cout << " - Es cercano a el punto " << puntoCercano2 << endl;
+    cout << "[" << punto1x << " , " << punto1y << "]";
+    cout << " - Es cercano al punto " << puntoCercano1 << endl;
+    cout << "[" << punto2x << " , " << punto2y << "]";
+    cout << " - Es cercano al punto " << puntoCercano2 << endl;
     //	Distancia minima de puntos
     crearCamino(puntoCercano1, puntoCercano2);
 
@@ -265,7 +266,7 @@ int main(void)
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-    GLFWwindow *window = glfwCreateWindow(800, 800, "Corner table", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(600, 600, "Corner table", NULL, NULL);
     glfwMakeContextCurrent(window);
     if (glewInit() != GLEW_OK)
     {
