@@ -1,201 +1,276 @@
-//============================================================================
-//Modificar init-display para dibujar corner table
-//============================================================================
-
 // Include standard headers
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
-
+#include <time.h>
+#include <string>
 #include <fstream>
 
+#include <GL/glew.h>
+
+
+// Incluir GLFW
+#include <GLFW/glfw3.h>
+
+
+// Incluir recursos creados
+#include "Utils.h"
+#include "CornerTable.h"
+
+
 #include "DefinitionTypes.h"
+#include "camino_minimo.h"
 
 
+#include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <glm/glm.hpp>
 using namespace glm;
-#include "CornerTable.h"
-// Include GLEW
-#define GLEW_STATIC
-#include <GL\glew.h>
-
-// Include GLFW
-#include <GLFW\glfw3.h>
-
 using namespace std;
+
+#define numVAOs 1
+#define numVBOs 1
+#define numEBOs 2
+#define normalize 2
 
 // GLuint : unsigned int
 GLuint renderingProgram;
+GLuint vao[numVAOs];
+GLuint vbo[numVBOs];
+GLuint ebo[numEBOs];
 
-GLuint m_VBO;
-GLuint m_VAO;
+
+int cantidadPuntos;
+double* vertexList1;
 int points;
-using namespace std;
-struct verticefin{
-	vec3 vortex;
-};
+CornerTable *ct;
+vector<unsigned int> indiceCamino;
 
-GLuint createShaderProgram() {
-    // declares two shaders as character strings
-    // Vertex Shader code
-    static const char *vshaderSource =
-    		"#version 330  \n"
-    		"layout (location = 0) in vec3 pos; \n"
-    		"void main() { \n"
-    		" gl_Position = vec4(0.3*pos.x, 0.3*pos.y, pos.z, 1.0);	\n"
-    		"}";
+void generadorPuntos(double &x1, double &y1,  double &x2 ,double &y2){
+    srand( time( NULL ) );
 
-    // Fragment Shader
-    static const char *fshaderSource =
-    		"#version 330  \n"
-    		"out vec4 colour; \n"
-    		"void main(){ \n"
-    		" colour = vec4(1.0, 0.0, 0.0, 1.0); \n"
-    		"}";
-    
-    // glCreateShader : generates the two shaders of types GL_VERTEX_SHADER and GL_FRAGMENT_SHADER
-    // OpenGL creates each shader object, and returns an integer ID for each
-    GLuint vShader = glCreateShader(GL_VERTEX_SHADER);
-    GLuint fShader = glCreateShader(GL_FRAGMENT_SHADER);
-    
-    // loads the GLSL code from the strings into the empty shader objects
-    // glShaderSource(ShaderObject, NumberOfStrings : 1, ArrayOfPointers, -)
-    glShaderSource(vShader, 1, &vshaderSource, NULL);
-    glShaderSource(fShader, 1, &fshaderSource, NULL);
-    
-    // the shaders are each compiled
-    glCompileShader(vShader);
-    glCompileShader(fShader);
-    
-    // the integer ID of a program object
-    GLuint vfProgram = glCreateProgram();
-    
-    // attatches each of the shaders to the program object
-    glAttachShader(vfProgram, vShader);
-    glAttachShader(vfProgram, fShader);
-    
-    // requests that the GLSL compiler ensure that the shaders are compatible
-    glLinkProgram(vfProgram);
-    
-    return vfProgram;
+    x1 = -3.0000 + (rand( ) % 60010 ) / 10000.0f;
+    y1= -3.0000 + (rand( ) % 60010 ) / 10000.0f;
+    x2 = -3.0000 + (rand( ) % 60010 ) / 10000.0f;
+    y2= -3.0000 + (rand( ) % 60010 ) / 10000.0f;
+
 }
 
-void init (GLFWwindow* window) {
-    renderingProgram = createShaderProgram();
-    ifstream fin;
-        	fin.open("mesh/mesh23.mesh");
+void ubicarCoordenada(double vertexList[],int npoint,double punto1x, double punto1y,int &punto){
+	double tempx,tempy;
+	double cercanox,cercanoy;
+	double cercanoxComparador,cercanoyComparador;
+	cercanoxComparador = 1000;
+	cercanoyComparador = 1000;
 
-        	string name; //Off
-        	int npoint,ntriangle,var3;//Numero de puntos, orden y colores
-        	int var0;;
-        	fin>>name;
-        	fin>>npoint>>ntriangle>>var3;
+	for(int i = 1 ; i <= npoint ;i++){
+		tempx = vertexList[(i-1)*3];
+		tempy = vertexList[(i-1)*3+1];
+		cercanox = tempx - punto1x;
+		if(cercanox<=0){
+			cercanox = cercanox*(-1.0);
+		}
+		cercanoy = tempy - punto1y;
+		if(cercanoy<=0){
+			cercanoy = cercanoy*(-1.0);
+		}
+		if(((punto1x - tempx) == 0) && ((punto1y - tempy) == 0)){
+			punto = i-1;
+			break;
+		}else{
+			if(cercanox<cercanoxComparador && cercanoy < cercanoyComparador){
+				cercanoxComparador = cercanox;
+				cercanoyComparador = cercanoy;
+				punto = i-1;
+			}
+		}
+	}
+}
 
-        	//llenamos la lista de puntos
-        	double* vertexList = new double[3*npoint];
-
-        	for(int i = 0; i<npoint;++i){
-        		fin>>vertexList[3*i]>>vertexList[3*i+1]>>vertexList[3*i+2];
-
-        	}
-
-        	const CornerType numberTriangles = ntriangle;
-        	const CornerType numberVertices = npoint;
-
-        	CornerType* triangleList = new CornerType[3*ntriangle];
-        	for(int i = 0; i<ntriangle;++i){
-        		fin>>var0>>triangleList[i*3]>>triangleList[i*3+1]>>triangleList[i*3+2];
-        	}
-        	int numberCoordinatesByVertex = 3;
-        	CornerTable ct = CornerTable(triangleList,vertexList,
-        										numberTriangles,
-        										numberVertices,
-        										numberCoordinatesByVertex);
-
-        	//ct._cornerToVertex
-    //cout<<ct.getNumTriangles()<<endl<<ct.getNumberVertices()<<endl;
-
-    vec3 vert[ct.getNumTriangles()*3];
-
-    verticefin verti[ct.getNumTriangles()];
-
-    //cout<<ct.getNumTriangles()<<endl;
-
-    //cout<<ct.cornerToVertexIndex(9)<<endl; //Retorna posicion de un punto (no el punto)
-
-    //cout<<vertexList[ct.cornerToVertexIndex(9)]<<endl; // Retorna un punto de la posicion
-
-    for(int i = 0; i < ct.getNumTriangles();i++){
-
-    	vert[i*3] = vec3(vertexList[ct.cornerToVertexIndex(i*3+0)*3],vertexList[ct.cornerToVertexIndex(i*3+0)*3+1],vertexList[ct.cornerToVertexIndex(i*3+0)*3+2]);
-    	vert[i*3+1]=vec3(vertexList[ct.cornerToVertexIndex(i*3+1)*3],vertexList[ct.cornerToVertexIndex(i*3+1)*3+1],vertexList[ct.cornerToVertexIndex(i*3+1)*3+2]);
-		vert[i*3+2]=vec3(vertexList[ct.cornerToVertexIndex(i*3+2)*3],vertexList[ct.cornerToVertexIndex(i*3+2)*3+1],vertexList[ct.cornerToVertexIndex(i*3+2)*3+2]);
-
-    }
-
-    points = ct.getNumTriangles()*3;
+void leerMesh(){
+	ifstream fin;
+	fin.open("mesh/mesh21.mesh");
+	string name;
+	int npoint,ntriangle,var3;//Numero de puntos, orden y colores
+	int var0;;
+	fin>>name;
+	fin>>npoint>>ntriangle>>var3;
 
 
-	glGenVertexArrays(1, &m_VAO);
-	glBindVertexArray(m_VAO);
-
-	glGenBuffers(1, &m_VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vert), vert, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(
-			0,	// Atributo 0 (layout = 0 )
-			3,	// cada vertice posee 3 valores
-			GL_FLOAT,	// cada valor del vértice es del tipo GLfloat
-			GL_FALSE,	// Quer normalizar os dados e converter tudo pra NDC ? ( no nosso caso, já esta tudo correto, então deixamos como FALSE)
-			0,	// De quantos em quantos bytes, este atributo é encontrado no buffer
-			0	// Onde está o primeiro valor deste atributo no buffer.
+	double* vertexList = new double[3*npoint];
+	for(int i = 0; i<npoint;++i){
+		fin>>vertexList[3*i]>>vertexList[3*i+1]>>vertexList[3*i+2];
+	}
+	const CornerType numberTriangles = ntriangle;
+	const CornerType numberVertices = npoint;
+	CornerType* triangleList = new CornerType[3*ntriangle];
+	for(int i = 0; i<ntriangle;++i){
+		fin>>var0>>triangleList[i*3]>>triangleList[i*3+1]>>triangleList[i*3+2];
+	}
+	int numberCoordinatesByVertex = 3;
+	CornerTable *CT = new CornerTable(triangleList,
+									vertexList,
+									numberTriangles,
+									numberVertices,
+									numberCoordinatesByVertex
 	);
-	glEnableVertexAttribArray(0);	// Habilita este atributo "0"
+	ct = CT;
+	cantidadPuntos = npoint;
+	vertexList1= vertexList;
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-    // VAO : Vertex Array Objects, OpenGL requires at least one VAO
-    // Cria um ID na GPU para um array de  buffers
-	glBindVertexArray(m_VAO);
+}
+
+void crearCamino(int inicio, int destino){
+    vector<unsigned int> camino;
+    const CornerType *trianglesPositions = ct->getTriangleList();
+
+    min_path(camino, ct, inicio, destino);
+
+    int aux = camino[destino];
+    indiceCamino.push_back(trianglesPositions[destino*3]);
+    indiceCamino.push_back(trianglesPositions[destino*3 + 1]);
+    indiceCamino.push_back(trianglesPositions[destino*3 + 2]);
+
+while(aux>-1){
+ 	indiceCamino.push_back(trianglesPositions[aux*3]);
+    	indiceCamino.push_back(trianglesPositions[aux*3 + 1]);
+    	indiceCamino.push_back(trianglesPositions[aux*3 + 2]);
+        aux = camino[aux];
+    }
+	
+	
+	void buffers() {
+	 double* vertexPositions = ct->getAttributes();
+    const CornerType *trianglesPositions = ct->getTriangleList();
+	 for (unsigned int i=0; i<ct->getNumberVertices()*3; i++)
+        vertexPositions[i] *= normalize;
+
+    glGenVertexArrays(1, vao);
+    glBindVertexArray(vao[0]);
+
+    glGenBuffers(numVBOs, vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+	glBufferData(GL_ARRAY_BUFFER, ct->getNumberVertices()*3*sizeof(double), &vertexPositions[0], GL_STATIC_DRAW);
+
+    glGenBuffers(numEBOs, ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[0]);
+	 glBufferData(GL_ELEMENT_ARRAY_BUFFER, ct->getNumTriangles()*3*sizeof(CornerType), &trianglesPositions[0], GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[1]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indiceCamino.size()*3*sizeof(CornerType), &indiceCamino[0], GL_STATIC_DRAW);
+
+	}
+
+
+void init (GLFWwindow* window) {
+	// Shaders
+	renderingProgram = Utils::createShaderProgram("src/vertShader.glsl", "src/fragShader.glsl");
+// Lectura de mesh
+	leerMesh();
+		// Generacion de puntos
+	double punto1x,punto1y,punto2x,punto2y;
+	generadorPuntos(punto1x,punto1y,punto2x,punto2y);
+	int puntoCercano1,puntoCercano2;
+	//	Ubicacion de puntos
+	ubicarCoordenada(vertexList1,cantidadPuntos,punto1x,punto1y,puntoCercano1);
+	ubicarCoordenada(vertexList1,cantidadPuntos,punto2x,punto2y,puntoCercano2);
+	cout<<"[" << punto1x <<" - " <<punto1y<< "]";
+	cout<<" - Es cercano a el punto "<<puntoCercano1<<endl;
+	cout<<"[" << punto2x <<" - " <<punto2y<< "]";
+	cout<<" - Es cercano a el punto "<<puntoCercano2<<endl;
+	//	Distancia minima de puntos
+	crearCamino(puntoCercano1,puntoCercano2);
+
+	//	Mostrar ID's de triangulos recorridos
+	for(unsigned int i=0; i<indiceCamino.size(); i+=3){
+	    cout<<i/3+1<<" : "<<indiceCamino[i]<<" , "<<indiceCamino[i+1]<<" , "<<indiceCamino[i+2]<<endl;
+	 }
+	 
+	 // Declarar buffers
+	buffers();
 }
 
 void display(GLFWwindow* window, double currentTime) {
-    // loads the program containing the two compiled shaders into the OpenGL pipeline stages (onto the GPU)
-    glUseProgram(renderingProgram);
-    //glPointSize(30.0f);
-    // initiates pipeline processing
-    // mode: GL_POINTS, from 0, one (point)
-    glDrawArrays(GL_TRIANGLES, 0, points);
+
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glUseProgram(renderingProgram);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+	glVertexAttribPointer(0, 3, GL_DOUBLE, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(0);
+
+	vec3 color1;
+	color1 = vec3(1.0, 0.00, 0.0);
+	glUniform3fv(glGetUniformLocation(renderingProgram, "vColor"), 1, value_ptr(color1));
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[0]);
+	//Dibujo de CORNER TABLE
+	for(int i=0; i<ct->getNumTriangles() ; i++){
+		color1 = vec3(i%3-0.42, i%5-0.42, i%7-0.43);
+		if(i==0){
+			color1 = vec3(1, 0.42, 0.23);
+		}
+			glUniform3fv(glGetUniformLocation(renderingProgram, "vColor"), 1, value_ptr(color1));
+	            glDrawElements(
+	                GL_TRIANGLES,
+	                3,
+	                GL_UNSIGNED_INT,
+	                (void*)(i*3*sizeof(GL_UNSIGNED_INT))
+	            );
+	        }
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	//DIBUJO DE RECORRIDO DE TRIANGULOS
+    color1 = vec3(1, 1, 1);
+    glUniform3fv(glGetUniformLocation(renderingProgram, "vColor"), 1, value_ptr(color1));
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[1]);
+	glDrawElements(
+	        GL_TRIANGLES,
+			indiceCamino.size(),
+	        GL_UNSIGNED_INT,
+	        0
+	);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	// TRAZADO DE TRIANGULOS
+	color1 = glm::vec3(0.0, 0.0, 0.0);
+	glUniform3fv(glGetUniformLocation(renderingProgram, "vColor"), 1, value_ptr(color1));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[1]);
+    for(int i=0; i<indiceCamino.size()/3 ; i++){
+    	glDrawElements(
+                 GL_LINE_LOOP,
+                 3,
+                 GL_UNSIGNED_INT,
+                 (void*)(i*3*sizeof(GL_UNSIGNED_INT))
+ 	     );
+	 }
+
 }
 
 int main(void) {
-	if (!glfwInit()) {
-		exit(EXIT_FAILURE);
-	}
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    if (!glfwInit()) {
+    	exit(EXIT_FAILURE);
+    }
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); 	// Resizable option.
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-    GLFWwindow* window = glfwCreateWindow(800, 800, "Corner Table", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(800, 800, "Corner table", NULL, NULL);
     glfwMakeContextCurrent(window);
-	if (glewInit() != GLEW_OK) {
-		exit(EXIT_FAILURE);
-	}
-	glfwSwapInterval(1);
-    
+	 if (glewInit() != GLEW_OK) {
+    	exit(EXIT_FAILURE);
+    }
+    glfwSwapInterval(1);
+
     init(window);
-    
     while (!glfwWindowShouldClose(window)) {
         display(window, glfwGetTime());
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
-    
-    glfwDestroyWindow(window);
+	   glfwDestroyWindow(window);
     glfwTerminate();
     exit(EXIT_SUCCESS);
 }
