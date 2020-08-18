@@ -97,7 +97,7 @@ void readMesh()
 {
     ifstream fin;
     //Mesh 21
-    fin.open("mesh/mesh10.mesh");
+    fin.open("mesh/mesh.mesh");
     string name;
 
     int npoint, ntriangle, var3;
