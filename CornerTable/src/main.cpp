@@ -1,3 +1,17 @@
+/*============================================================================
+					TAREA 07 - CURVAS Y SUPERFICIES
+
+PROFESOR  	 : 		PAUCAR CURASMA, Herminio
+INTEGRANTES	 :
+				[3] AZORSA SALAZAR, Stephanie 			17200317
+				[3] MARROQUIN GAVELAN, Juan Patricio	17200329
+				[3] MINCIA RETAMOZO, Alessandra Yvonne	17200289
+				[3] OSCO PUPE, Jean William				17200082
+				[3] ROJAS CAMARGO, Melinna Victoria		17200106
+				[3] VELAZCO HUERE, Leydi Mabel			17200307
+
+================================================================================*/
+
 // Include standard headers
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,9 +52,8 @@ CornerTable *ct; //Corner Table
 vector<unsigned int> pathIndex;
 
 
-//Función que genera dos puntos aleatorios 2D
-void generatePoints(double &x1, double &y1, double &x2, double &y2)
-{
+//Function that generates random 2D points
+void generatePoints(double &x1, double &y1, double &x2, double &y2) {
     srand(time(NULL));
 
     x1 = -3.0000 + (rand() % 60010) / 10000.0f;
@@ -49,33 +62,29 @@ void generatePoints(double &x1, double &y1, double &x2, double &y2)
     y2 = -3.0000 + (rand() % 60010) / 10000.0f;
 }
 
-void findCoord(double vertexList[], int npoint, double px1, double py1, int &p)
-{
+//Function that finds the points of the x and y coordinates
+void findCoord(double vertexList[], int npoint, double px1, double py1, int &p) {
     double tempX, tempY;
     double nX, nY;
     double cnX = 1000, cnY = 1000;
 
-    for (int i = 1; i <= npoint; i++)
-    {
+    for (int i = 1; i <= npoint; i++){
         tempX = vertexList[(i - 1) * 3];
         tempY = vertexList[(i - 1) * 3 + 1];
 
-        //Cersionarandonos que el punto no sea negativo
+        //It is verified that the points are not negative
         nX = tempX - px1;
         nY = tempY - py1;
 
         if (nX <= 0) nX = nX * (-1.0);
         if (nY <= 0) nY = nY * (-1.0);
 
-        if (((px1 - tempX) == 0) && ((py1 - tempY) == 0))
-        {
+        if (((px1 - tempX) == 0) && ((py1 - tempY) == 0)) {
             p = i - 1;
             break;
         }
-        else
-        {
-            if (nX < cnX && nY < cnY)
-            {
+        else{
+            if (nX < cnX && nY < cnY) {
                 cnX = nX;
                 cnY = nY;
                 p = i - 1;
@@ -88,7 +97,7 @@ void readMesh()
 {
     ifstream fin;
     //Mesh 21
-    fin.open("mesh/mesh.mesh");
+    fin.open("mesh/mesh10.mesh");
     string name;
 
     int npoint, ntriangle, var3;
@@ -248,7 +257,7 @@ void display(GLFWwindow *window, double currentTime)
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     //Pintando bordes del camino
-    color = vec3(0.0, 0.0, 0.0);
+    color = vec3(0.0, 1.0, 0.0);
 
     glUniform3fv(glGetUniformLocation(rProgram, "vColor"), 1, value_ptr(color));
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[1]);
