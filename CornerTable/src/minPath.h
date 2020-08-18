@@ -54,6 +54,7 @@ void DijkstraPath(vector<unsigned int> &path, vector<vector<unsigned int>> adjma
     }
 }
 
+//Función que determina si los triangulos están conectados
 bool isConected(Triangle A, Triangle B)
 {
     set<unsigned int> sa;
@@ -61,6 +62,9 @@ bool isConected(Triangle A, Triangle B)
     sa.insert(A.vertex2);
     sa.insert(A.vertex3);
     int cont = 0;
+    //Si triangulo A encuentra un vertice que
+    //coincide con un vertice del triangulo B
+    //significa que estan conectados
     if (sa.find(B.vertex1) != sa.end())
         cont++;
     if (sa.find(B.vertex2) != sa.end())
@@ -70,6 +74,7 @@ bool isConected(Triangle A, Triangle B)
     return cont > 1;
 }
 
+//Función que construye la Matriz de Adyacencia
 void buildAdjMat(CornerTable *CT, vector<vector<unsigned int>> &adjMat)
 {
     const CornerType *triangleList = CT->getTriangleList();
@@ -77,6 +82,8 @@ void buildAdjMat(CornerTable *CT, vector<vector<unsigned int>> &adjMat)
 
     adjMat.resize(numTriangles);
 
+    //Se llena la matriz de adyacencia con 0 desde
+    //el inicio(begin) hasta el final(end)
     fill(adjMat.begin(), adjMat.end(), vector<unsigned int>(numTriangles, 0));
     for (unsigned int i = 0; i < numTriangles; i++)
     {
@@ -88,6 +95,9 @@ void buildAdjMat(CornerTable *CT, vector<vector<unsigned int>> &adjMat)
             Triangle comp{triangleList[3 * j],
                           triangleList[3 * j + 1],
                           triangleList[3 * j + 2]};
+
+            //Se asigna el valor de 1 en ambos sentidos
+            //si los triangulos estan conectados
             if (isConected(v, comp))
             {
                 adjMat[i][j] = 1;
