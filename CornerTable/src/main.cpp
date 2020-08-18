@@ -97,7 +97,7 @@ void readMesh()
 {
     ifstream fin;
     //Mesh 21
-    fin.open("mesh/mesh.mesh");
+    fin.open("mesh/mesh21.mesh");
     string name;
 
     int npoint, ntriangle, var3;
@@ -200,8 +200,8 @@ void init(GLFWwindow *window)
     cout << "-------------------------------" << endl;
     cout << "Punto 1 : [" << px1 << " , " << py1 << "]"<<endl;
     cout << "Punto 2 : [" << px2 << " , " << py2 << "]"<<endl;
-    //cout << "El punto 1 está cerca al punto #" << nearPoint1 << endl;
-    //cout << "El punto 2 está cerca al punto #" << nearPoint2 << endl;
+    //cout << "El punto 1 estï¿½ cerca al punto #" << nearPoint1 << endl;
+    //cout << "El punto 2 estï¿½ cerca al punto #" << nearPoint2 << endl;
 
     //	Distancia minima de puntos
     buildPath(nearPoint1, nearPoint2);
