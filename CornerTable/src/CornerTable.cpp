@@ -121,11 +121,11 @@ bool CornerTable::edgeFlip( const CornerType corner )
 {
     if (corner == BORDER_CORNER || _oppositeCorner[corner] == BORDER_CORNER)
     {
-        //It is not allowed to flip.
+        //No está permitido el flip
         return false;
     }
 
-    //Identify the incidences.
+    //Identificando incidencias
     CornerType c1 = cornerNext( corner );
     CornerType c2 = cornerPrevious( corner );
     CornerType c3 = _oppositeCorner[corner];
@@ -140,17 +140,17 @@ bool CornerTable::edgeFlip( const CornerType corner )
     CornerType v = _cornerToVertex[c1];
     CornerType s = _cornerToVertex[c3];
 
-    //Change the triangulation.
+    //Cambiamos la triangulación
     _cornerToVertex[c5] = t;
     _cornerToVertex[c2] = s;
 
-    //Save the corners to vertex.
+    //Guardamos los corners al vertex
     _vertexToCorner[t] = corner;
     _vertexToCorner[v] = c1;
     _vertexToCorner[u] = c4;
     _vertexToCorner[s] = c2;
 
-    //Ajust the opposite corners.
+    //Ajustamos los corners opuestos
     _oppositeCorner[c4] = c1;
     _oppositeCorner[c1] = c4;
 
