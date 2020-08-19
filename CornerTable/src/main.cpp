@@ -248,8 +248,8 @@ void display(GLFWwindow *window, double currentTime)
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    //Pintando triangulos recorrido de blanco
-    color = vec3(1, 1, 1);
+    //Pintando triangulos recorrido de negro
+    color = vec3(0, 0, 0);
     glUniform3fv(glGetUniformLocation(rProgram, "vColor"), 1, value_ptr(color));
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo[1]);
