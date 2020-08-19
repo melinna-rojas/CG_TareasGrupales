@@ -14,7 +14,7 @@ CornerTable::CornerTable( const CornerType* triangleList, double* vertexList,
                           const CornerType numberTriangles, const CornerType numberVertices,
                           const unsigned int numberCoordinatesByVertex )
 {
-    //Copy the counters to the Corner Table.
+    //Copiando los counters al corner table
     _numberVertices = numberVertices;
     _numberTriangles = numberTriangles;
     _numberCoordinatesByVertex = numberCoordinatesByVertex;
@@ -22,13 +22,13 @@ CornerTable::CornerTable( const CornerType* triangleList, double* vertexList,
     _maximumTriangles = numberTriangles;
     _reallocationFactor = 2;
 
-    //Allocate the vectors.
+    //Alocando los vectores
     _cornerToVertex = std::vector<CornerType>( 3 * numberTriangles );
     _vertexToCorner = std::vector<CornerType>( numberVertices );
     _oppositeCorner = std::vector<CornerType>( 3 * numberTriangles );
     _attributes = std::vector<double>( numberCoordinatesByVertex * numberVertices );
 
-    //Coppy the informations.
+    //Copiando la información
     memcpy( &_cornerToVertex[0], triangleList, 3 * numberTriangles * sizeof (CornerType ) );
     memcpy( &_attributes[0], vertexList, numberCoordinatesByVertex * numberVertices * sizeof ( double ) );
 
@@ -39,7 +39,7 @@ CornerTable::CornerTable( const CornerType* triangleList, double* vertexList,
         _oppositeCorner[i] = BORDER_CORNER;
     }
 
-    //Build the opposite table.
+    //Construyendo la tabla opuesta
     buildOppositeTable( );
 }
 
