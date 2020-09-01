@@ -1,15 +1,15 @@
 //============================================================================
-// Name        : T08 - Curvas
-// Version     : 1.0
-// Description : Using Bezier Curves for Drawing Lisa Simpson
+// 			TAREA 08
+// Profesor		: Herminio Paucar
+// Integrantes	:
+//
 //============================================================================
 
-
 // Include standard headers
-#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <iostream>
 
 // Include GLEW
 #define GLEW_STATIC
@@ -17,32 +17,80 @@
 
 // Include GLFW
 #include <GLFW/glfw3.h>
-GLFWwindow* window;
 
 // Include GLM
 #include <glm/glm.hpp>
+using namespace glm;
+using namespace std;
+#include <string>
+#include <fstream>
+#include "Utils.h"
 
-// Valores para el tamaño de la ventana de despliegue
-GLsizei winWidth = 600, winHeight = 600;
+using namespace std;
+GLuint renderingProgram;
 
-// Fija el tamaño de las coordenadas del mundo de la ventana de recorte
-GLfloat xwcMin = -1.0, xwcMax = 11.0;
-GLfloat ywcMin = -1.50, ywcMax = 13.5;
-
+//GLfloat* m_Vertices;
+//GLfloat* m_Vertices;
+GLuint m_VBO;
+GLuint m_VAO;
+GLfloat m_Vertices[3003*2*2];
+GLuint n_Vertices = 3003*2;
 class wcPt3D {
-
 public:
     GLfloat x, y, z;
 };
 
-void init(void) {
-    glClearColor(1.0, 1.0, 1.0, 0.0);
-}
+//Declarando puntos de control
+  wcPt3D c15[4] = {{0.3678, 0.4304}, {0.2661, 0.4187}, {0.2661, 0.6378}, {0.3678, 0.6261}}; //Ojo Completo
+  wcPt3D c16[4] = {{0.3600, 0.4304},{0.4774, 0.4187}, {0.4774, 0.6378},  {0.3678, 0.6261}};
+  wcPt3D c17[4] = {{0.4304, 0.4617}, {0.4696, 0.4617}, {0.5087, 0.4395},{0.5087, 0.4304}}; //Nariz
+  wcPt3D c18[4] = {{0.4226, 0.3913}, {0.4696, 0.3757},{0.5087, 0.3835}, {0.5087, 0.4304}}; //Nariz
+  wcPt3D c19[4] = {{0.4461, 0.5635}, {0.4696, 0.6261}, {0.5713, 0.6261},{0.5870, 0.5400}};   //ojo derecho
+  wcPt3D c20[4] = {{0.5087, 0.4304}, {0.5478, 0.4304}, {0.5948, 0.4539},{0.5870, 0.5400}}; //ojo derecho
+  wcPt3D c29[4] = {{0.5400, 0.4343},  {0.5400, 0.4343}, {0.5870, 0.3757}, {0.5870, 0.3757}}; //Boca
+  wcPt3D c30[4] = {{0.2896, 0.3365}, {0.3913, 0.2739},  {0.5478, 0.2857}, {0.5870, 0.3780}};        //
+  wcPt3D c32[4] = {{0.2817, 0.3209},  {0.2817, 0.3209}, {0.2974, 0.3522},  {0.2974, 0.3522}};   //
+  wcPt3D c31[4] = {{0.2583, 0.3443}, {0.1878, 0.3091}, {0.1878, 0.4422}, {0.2583, 0.4070}}; //Oreja
+  wcPt3D c28[4] = {{0.2270, 0.3600}, {0.2035, 0.3757}, {0.2270, 0.3991}, {0.2426, 0.3835}};   //Oreja
+  wcPt3D c33[4] = {{0.2348, 0.3365}, {0.2426, 0.2896},{0.2426, 0.2739}, {0.2348, 0.2348}};   //Cuello
+  wcPt3D c34[4] = {{0.1878, 0.3365},{0.1878, 0.3365}, {0.1878, 0.2817}, {0.1878, 0.2817}};   //Cabello
+  wcPt3D c35[4] = {{0.1878, 0.2817}, {0.1878, 0.2817},  {0.2387, 0.2817},  {0.2387, 0.2817}}; //Cabello
+  wcPt3D c36[4] = {{0.4461, 0.2974}, {0.4304, 0.2739}, {0.4070, 0.2817}, {0.4070, 0.2661}};   //Menton
+  wcPt3D c37[4] = {{0.4070, 0.2661}, {0.3913, 0.2348},  {0.3913, 0.2191}, {0.3835, 0.1957}};    //cuello
+ //Ojo 2 (Completo)
+  wcPt3D c38[4] = {{0.2661, 0.5635}, {0.2661, 0.5635}, {0.2896, 0.5478}, {0.2896, 0.5478}}; //Pestañas
+  wcPt3D c39[4] = {{0.2974, 0.6261},  {0.2974, 0.6261}, {0.3130, 0.6026}, {0.3130, 0.6026}}; //Pestañas
+  wcPt3D c40[4] = {{0.3522, 0.6496}, {0.3522, 0.6496}, {0.3600, 0.6261}, {0.3600, 0.6261}}; //Pestañas
+  wcPt3D c41[4] = {{0.4070, 0.6183}, {0.4070, 0.6183},  {0.4148, 0.6417}, {0.4148, 0.6417}}; //Pestañas
+ //Ojo 2
+   wcPt3D c42[4] = {{0.5087, 0.6065}, {0.5087, 0.6065}, {0.5165, 0.6300},{0.5165, 0.6300}}; //Pestañas
+   wcPt3D c43[4] = {{0.5478, 0.5948}, {0.5478, 0.5948},  {0.5635, 0.6183}, {0.5635, 0.6183}};     //Pestañas
+   wcPt3D c44[4] = {{0.5791, 0.5635}, {0.5791, 0.5635},  {0.6026, 0.5870}, {0.6026, 0.5870}};     //Pestañas
+   wcPt3D c45[4] = {{0.5893, 0.5243}, {0.5893, 0.5243},{0.6159, 0.5400},{0.6159, 0.5400}}; //Pestañas
+   wcPt3D c26[4] = {{0.1878, 0.3365},{0.0783, 0.3365}, {0.0783, 0.3365}, {0.1565, 0.4696}};          //PELO
+   wcPt3D c27[4] = {{0.1565, 0.4696},{0.0548, 0.5478},{0.0548, 0.5478},{0.1565, 0.6261}};              //PELO
+   wcPt3D c25[4] = {{0.1565, 0.6261},{0.1409, 0.7435},{0.1017, 0.7435}, {0.2348, 0.7670}};          //ARRIBA
+   wcPt3D c24[4] = {{0.2348, 0.7670}, {0.3130, 0.9000}, {0.2739, 0.9000}, {0.3757, 0.8217}};  //PELO
+   wcPt3D c23[4] = {{0.3757, 0.8217},{0.4696, 0.9000}, {0.4304, 0.9000}, {0.5165, 0.7826}}; //OREJA
+   wcPt3D c22[4] = {{0.5165, 0.7826},{0.6261, 0.7670}, {0.5870, 0.7670},  {0.5870, 0.6652}};
+   wcPt3D c21[4] = {{0.5870, 0.6652}, {0.6496, 0.6104}, {0.6496, 0.6104},{0.5870, 0.5400}};
 
-void plotPoint(wcPt3D bezCurvePt) {
-    glBegin(GL_POINTS);
-    glVertex2f(bezCurvePt.x, bezCurvePt.y);
-    glEnd();
+
+
+
+void computeBezPt(GLfloat u, wcPt3D *bezPt, GLint nCtrlPts, wcPt3D *ctrlPts, GLint *C) {
+    GLint k, n = nCtrlPts - 1;
+    GLfloat bezBlendFcn;
+
+    bezPt->x = bezPt->y = bezPt->z = -0.5;
+
+    // calcula las funciones de combinacion y combina los puntos de control
+    for (k = 0; k < nCtrlPts; k++) {
+        bezBlendFcn = C[k] * pow(u, k) * pow(1 - u, n - k);
+        bezPt->x += ctrlPts[k].x * bezBlendFcn;
+        bezPt->y += ctrlPts[k].y * bezBlendFcn;
+        bezPt->z += ctrlPts[k].z * bezBlendFcn;
+    }
 }
 
 // calcula los coeficientes binomiales C para un valor dado de n
@@ -59,22 +107,7 @@ void binomialCoeffs(GLint n, GLint *C) {
     }
 }
 
-void computeBezPt(GLfloat u, wcPt3D *bezPt, GLint nCtrlPts, wcPt3D *ctrlPts, GLint *C) {
-    GLint k, n = nCtrlPts - 1;
-    GLfloat bezBlendFcn;
-
-    bezPt->x = bezPt->y = bezPt->z = 0.0;
-
-    // calcula las funciones de combinacion y combina los puntos de control
-    for (k = 0; k < nCtrlPts; k++) {
-        bezBlendFcn = C[k] * pow(u, k) * pow(1 - u, n - k);
-        bezPt->x += ctrlPts[k].x * bezBlendFcn;
-        bezPt->y += ctrlPts[k].y * bezBlendFcn;
-        bezPt->z += ctrlPts[k].z * bezBlendFcn;
-    }
-}
-
-void bezier(wcPt3D *ctrlPts, GLint nCtrlPts, GLint nBezCurvePts) {
+void bezier(wcPt3D *ctrlPts, GLint nCtrlPts, GLint nBezCurvePts, GLfloat m_Verts[]) {
     wcPt3D bezCurvePt;
     GLfloat u;
     GLint *C, k;
@@ -86,265 +119,230 @@ void bezier(wcPt3D *ctrlPts, GLint nCtrlPts, GLint nBezCurvePts) {
     for (k = 0; k <= nBezCurvePts; k++) {
         u = GLfloat(k) / GLfloat(nBezCurvePts);
         computeBezPt(u, &bezCurvePt, nCtrlPts, ctrlPts, C);
-        plotPoint(bezCurvePt);
+        m_Verts[k*6+0] = bezCurvePt.x;
+        m_Verts[k*6+1] = bezCurvePt.y;
+        m_Verts[k*6+2] = 0;
+        //Colores
+        m_Verts[k*6+3] = 0.0f;
+        m_Verts[k*6+4] = 1.0f;
+        m_Verts[k*6+5] = 1.0f;
+
     }
+   // m_Vertices.push_back(bezCurvePt.x);
     delete[] C;
 }
 
-void displayFcn(void) {
-    // Fija el número de los puntos de control y el número de las posiciones
-    // de la curva que se trazarán a lo largo de la curva de Bezier
+
+void init (GLFWwindow* window) {
+	// Utils
+	renderingProgram = Utils::createShaderProgram("src/vertShader.glsl", "src/fragShader.glsl");
+
+    GLfloat m_V1[3003*2];
+    GLfloat m_V2[3003*2];
+   /* GLfloat m_V3[3003];
+    GLfloat m_V4[3003];
+    GLfloat m_V5[3003];
+    GLfloat m_V6[3003];
+    GLfloat m_V7[3003];
+    GLfloat m_V8[3003];
+    GLfloat m_V9[3003];
+    GLfloat m_V10[3003];
+    GLfloat m_V11[3003];
+    GLfloat m_V12[3003];
+    GLfloat m_V13[3003];
+    GLfloat m_V14[3003];
+    GLfloat m_V15[3003];
+    GLfloat m_V16[3003];
+    GLfloat m_V17[3003];
+    GLfloat m_V18[3003];
+    GLfloat m_V19[3003];
+    GLfloat m_V20[3003];
+    GLfloat m_V21[3003];
+    GLfloat m_V22[3003];
+    GLfloat m_V23[3003];
+    GLfloat m_V24[3003];
+    GLfloat m_V25[3003];
+    GLfloat m_V26[3003];
+    GLfloat m_V27[3003];
+    GLfloat m_V28[3003];
+    GLfloat m_V29[3003];
+    GLfloat m_V30[3003];
+    GLfloat m_V31[3003];*/
 
     GLint nCtrlPts = 4, nBezCurvePts = 1000;
 
-    wcPt3D c15[4] = {{4.7, 5.5},
-                     {3.4, 5.35},
-                     {3.4, 8.15},
-                     {4.7, 8.0}}; //Ojo Completo
-    wcPt3D c16[4] = {{4.6, 5.5},
-                     {6.1, 5.35},
-                     {6.1, 8.15},
-                     {4.7, 8.0}};
+    bezier(c15, nCtrlPts, nBezCurvePts, m_V1);
+    bezier(c16, nCtrlPts, nBezCurvePts, m_V2);
 
-    wcPt3D c17[4] = {{5.5, 5.9},
-                     {6.0, 5.9},
-                     {6.5, 5.8},
-                     {6.5, 5.5}}; //Nariz
-    wcPt3D c18[4] = {{5.4, 5.0},
-                     {6.0, 4.8},
-                     {6.5, 4.9},
-                     {6.5, 5.5}}; //Nariz
+   /* bezier(c17, nCtrlPts, nBezCurvePts, m_V3);
+    bezier(c18, nCtrlPts, nBezCurvePts, m_V4);
 
-    wcPt3D c19[4] = {{5.7, 7.2},
-                     {6.0, 8},
-                     {7.3, 8},
-                     {7.5, 6.9}};   //ojo derecho
-    wcPt3D c20[4] = {{6.5, 5.5},
-                     {7,   5.5},
-                     {7.6, 5.8},
-                     {7.5, 6.9}}; //ojo derecho
+    bezier(c19, nCtrlPts, nBezCurvePts, m_V5);
+    bezier(c20, nCtrlPts, nBezCurvePts, m_V6);
 
-    wcPt3D c29[4] = {{6.9, 5.55},
-                     {6.9, 5.55},
-                     {7.5, 4.8},
-                     {7.5, 4.8}}; //Boca
-    wcPt3D c30[4] = {{3.7, 4.3},
-                     {5,   3.5},
-                     {7,   3.65},
-                     {7.5, 4.83}};        //
-    wcPt3D c32[4] = {{3.6, 4.1},
-                     {3.6, 4.1},
-                     {3.8, 4.5},
-                     {3.8, 4.5}};   //
+    bezier(c29, nCtrlPts, nBezCurvePts, m_V7);
+    bezier(c30, nCtrlPts, nBezCurvePts, m_V8);
+    bezier(c32, nCtrlPts, nBezCurvePts, m_V9);
 
-    wcPt3D c31[4] = {{3.3, 4.4},
-                     {2.4, 3.95},
-                     {2.4, 5.65},
-                     {3.3, 5.2}}; //Oreja
-    wcPt3D c28[4] = {{2.9, 4.6},
-                     {2.6, 4.8},
-                     {2.9, 5.1},
-                     {3.1, 4.9}};   //Oreja
+    bezier(c31, nCtrlPts, nBezCurvePts, m_V10);
+    bezier(c28, nCtrlPts, nBezCurvePts, m_V11);
 
-    wcPt3D c33[4] = {{3.0,  4.3},
-                     {3.1,  3.7},
-                     {3.05, 3.5},
-                     {3.0,  3.}};   //Cuello
-    wcPt3D c34[4] = {{2.4, 4.3},
-                     {2.4, 4.3},
-                     {2.4, 3.6},
-                     {2.4, 3.6}};   //Cabello
-    wcPt3D c35[4] = {{2.4,  3.6},
-                     {2.4,  3.6},
-                     {3.05, 3.6},
-                     {3.05, 3.6}}; //Cabello
-    wcPt3D c36[4] = {{5.7, 3.8},
-                     {5.5, 3.5},
-                     {5.2, 3.6},
-                     {5.2, 3.4}};   //Menton
-    wcPt3D c37[4] = {{5.2, 3.4},
-                     {5.0, 3.},
-                     {5.0, 2.8},
-                     {4.9, 2.5}};    //cuello
+    bezier(c33, nCtrlPts, nBezCurvePts, m_V12);
+    bezier(c34, nCtrlPts, nBezCurvePts, m_V13);
+    bezier(c35, nCtrlPts, nBezCurvePts, m_V14);
+    bezier(c36, nCtrlPts, nBezCurvePts, m_V15);
+    bezier(c37, nCtrlPts, nBezCurvePts, m_V16);
 
-    //Ojo 2 (Completo)
-    wcPt3D c38[4] = {{3.4, 7.2},
-                     {3.4, 7.2},
-                     {3.7, 7.0},
-                     {3.7, 7.0}}; //Pestañas
-    wcPt3D c39[4] = {{3.8, 8.0},
-                     {3.8, 8.0},
-                     {4.0, 7.7},
-                     {4.0, 7.7}}; //Pestañas
-    wcPt3D c40[4] = {{4.5, 8.3},
-                     {4.5, 8.3},
-                     {4.6, 8.0},
-                     {4.6, 8.0}}; //Pestañas
-    wcPt3D c41[4] = {{5.2, 7.9},
-                     {5.2, 7.9},
-                     {5.3, 8.2},
-                     {5.3, 8.2}}; //Pestañas
-    //Ojo 2
-    wcPt3D c42[4] = {{6.5, 7.75},
-                     {6.5, 7.75},
-                     {6.6, 8.05},
-                     {6.6, 8.05}}; //Pestañas
-    wcPt3D c43[4] = {{7.0, 7.6},
-                     {7.0, 7.6},
-                     {7.2, 7.9},
-                     {7.2, 7.9}};     //Pestañas
-    wcPt3D c44[4] = {{7.4, 7.2},
-                     {7.4, 7.2},
-                     {7.7, 7.5},
-                     {7.7, 7.5}};     //Pestañas
-    wcPt3D c45[4] = {{7.53, 6.7},
-                     {7.53, 6.7},
-                     {7.87, 6.9},
-                     {7.87, 6.9}}; //Pestañas
+    bezier(c38, nCtrlPts, nBezCurvePts, m_V17);
+    bezier(c39, nCtrlPts, nBezCurvePts, m_V18);
+    bezier(c40, nCtrlPts, nBezCurvePts, m_V19);
+    bezier(c41, nCtrlPts, nBezCurvePts, m_V20);
 
-    wcPt3D c26[4] = {{2.4, 4.3},
-                     {1,   4.3},
-                     {1,   4.3},
-                     {2,   6}};          //PELO
-    wcPt3D c27[4] = {{2,   6},
-                     {0.7, 7},
-                     {0.7, 7},
-                     {2,   8}};              //PELO
-    wcPt3D c25[4] = {{2,   8},
-                     {1.8, 9.5},
-                     {1.3, 9.5},
-                     {3,   9.8}};          //ARRIBA
-    wcPt3D c24[4] = {{3,   9.8},
-                     {4,   11.5},
-                     {3.5, 11.5},
-                     {4.8, 10.5}};  //PELO
-    wcPt3D c23[4] = {{4.8, 10.5},
-                     {6,   11.5},
-                     {5.5, 11.5},
-                     {6.6, 10}}; //OREJA
-    wcPt3D c22[4] = {{6.6, 10},
-                     {8,   9.8},
-                     {7.5, 9.8},
-                     {7.5, 8.5}};
-    wcPt3D c21[4] = {{7.5, 8.5},
-                     {8.3, 7.8},
-                     {8.3, 7.8},
-                     {7.5, 6.9}};
+    bezier(c42, nCtrlPts, nBezCurvePts, m_V21);
+    bezier(c43, nCtrlPts, nBezCurvePts, m_V22);
+    bezier(c44, nCtrlPts, nBezCurvePts, m_V23);
+    bezier(c45, nCtrlPts, nBezCurvePts, m_V24);
 
-    glClear(GL_COLOR_BUFFER_BIT);
-    glPointSize(1);
-   // glColor3f(0.0, 0.0, 0.0); // punto color negro
+    bezier(c26, nCtrlPts, nBezCurvePts, m_V25);
+    bezier(c27, nCtrlPts, nBezCurvePts, m_V26);
+    bezier(c25, nCtrlPts, nBezCurvePts, m_V27);
+    bezier(c24, nCtrlPts, nBezCurvePts, m_V28);
+    bezier(c23, nCtrlPts, nBezCurvePts, m_V29);
+    bezier(c22, nCtrlPts, nBezCurvePts, m_V30);
+    bezier(c21, nCtrlPts, nBezCurvePts, m_V31);
+*/
 
-    bezier(c20, nCtrlPts, nBezCurvePts);
-    bezier(c19, nCtrlPts, nBezCurvePts);
-    bezier(c18, nCtrlPts, nBezCurvePts);
-    bezier(c17, nCtrlPts, nBezCurvePts);
-    bezier(c15, nCtrlPts, nBezCurvePts);
-    bezier(c16, nCtrlPts, nBezCurvePts);
-    bezier(c21, nCtrlPts, nBezCurvePts);
-    bezier(c22, nCtrlPts, nBezCurvePts);
-    bezier(c23, nCtrlPts, nBezCurvePts);
-    bezier(c24, nCtrlPts, nBezCurvePts);
-    bezier(c25, nCtrlPts, nBezCurvePts);
-    bezier(c26, nCtrlPts, nBezCurvePts);
-    bezier(c27, nCtrlPts, nBezCurvePts);
-    bezier(c28, nCtrlPts, nBezCurvePts);
-    bezier(c29, nCtrlPts, nBezCurvePts);
-    bezier(c30, nCtrlPts, nBezCurvePts);
-    bezier(c31, nCtrlPts, nBezCurvePts);
-    bezier(c32, nCtrlPts, nBezCurvePts);
-    bezier(c33, nCtrlPts, nBezCurvePts);
-    bezier(c34, nCtrlPts, nBezCurvePts);
-    bezier(c35, nCtrlPts, nBezCurvePts);
-    bezier(c36, nCtrlPts, nBezCurvePts);
-    bezier(c37, nCtrlPts, nBezCurvePts);
-    bezier(c38, nCtrlPts, nBezCurvePts);
-    bezier(c39, nCtrlPts, nBezCurvePts);
-    bezier(c40, nCtrlPts, nBezCurvePts);
-    bezier(c41, nCtrlPts, nBezCurvePts);
-    bezier(c42, nCtrlPts, nBezCurvePts);
-    bezier(c43, nCtrlPts, nBezCurvePts);
-    bezier(c44, nCtrlPts, nBezCurvePts);
-    bezier(c45, nCtrlPts, nBezCurvePts);
+ //   for (GLuint i=0; i< n_Vertices; i++) {
+    for (GLuint i=0; i< n_Vertices; i++) {
+    	m_Vertices[i+3003*2*0] = m_V1[i];
+    	cout <<m_Vertices[i+3003*2*0]<<endl;
+    //	m_Vertices[i+3003*2*1] = m_V2[i];
 
-    glPushMatrix(); ///Ojos
-    glTranslatef(4.6, 6.7, 0.0);
-    glScalef(1, 1.2, 1);
-    glColor3f(0, 0, 0);
-    //glutSolidSphere(0.15, 30, 20);
-    glPopMatrix();
+    	/*
+    	m_Vertices[i+3003*2] = m_V3[i];
+    	m_Vertices[i+3003*3] = m_V4[i];
+    	m_Vertices[i+3003*4] = m_V5[i];
+    	m_Vertices[i+3003*5] = m_V6[i];
+    	m_Vertices[i+3003*6] = m_V7[i];
+    	m_Vertices[i+3003*7] = m_V8[i];
+    	m_Vertices[i+3003*8] = m_V9[i];
+    	m_Vertices[i+3003*9] = m_V10[i];
+    	m_Vertices[i+3003*10] = m_V11[i];
+    	m_Vertices[i+3003*11] = m_V12[i];
+    	m_Vertices[i+3003*12] = m_V13[i];
+    	m_Vertices[i+3003*13] = m_V14[i];
+    	m_Vertices[i+3003*14] = m_V15[i];
+    	m_Vertices[i+3003*15] = m_V16[i];
+    	m_Vertices[i+3003*16] = m_V17[i];
+    	m_Vertices[i+3003*17] = m_V18[i];
+    	m_Vertices[i+3003*18] = m_V19[i];
+    	m_Vertices[i+3003*19] = m_V20[i];
+    	m_Vertices[i+3003*20] = m_V21[i];
+    	m_Vertices[i+3003*21] = m_V22[i];
+    	m_Vertices[i+3003*22] = m_V23[i];
+    	m_Vertices[i+3003*23] = m_V24[i];
+    	m_Vertices[i+3003*24] = m_V25[i];
+    	m_Vertices[i+3003*25] = m_V26[i];
+    	m_Vertices[i+3003*26] = m_V27[i];
+    	m_Vertices[i+3003*27] = m_V28[i];
+    	m_Vertices[i+3003*28] = m_V29[i];
+    	m_Vertices[i+3003*29] = m_V30[i];
+    	m_Vertices[i+3003*30] = m_V31[i];*/
+    }
 
-    glPushMatrix(); ///Ojos
-    glTranslatef(6.5, 6.5, 0.0);
-    glScalef(1, 1.2, 1);
-    glColor3f(0, 0, 0);
-    //glutSolidSphere(0.15, 30, 20);
-    glPopMatrix();
+    glGenVertexArrays(1, &m_VAO);
+      glBindVertexArray(m_VAO);
 
-    glPushMatrix(); ///Collar
-    glTranslatef(2.8, 2.8, 0.0);
-    glScalef(2.0, 2.3, 1.0);
-    glColor3f(0, 0, 0);
-    //glutSolidSphere(0.15, 30, 20);
-    glPopMatrix();
+    glGenBuffers(1, &m_VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+    glBufferData(
+    	GL_ARRAY_BUFFER,
+    	sizeof(m_Vertices),
+    	m_Vertices,
+    	GL_STATIC_DRAW
+    );
 
-    glPushMatrix(); ///Collar
-    glTranslatef(3.2, 2.4, 0.0);
-    glScalef(2.1, 2.3, 1.0);
-    glColor3f(0, 0, 0);
-    //glutSolidSphere(0.15, 30, 20);
-    glPopMatrix();
 
-    glPushMatrix(); ///Collar
-    glTranslatef(3.7, 2.2, 0.0);
-    glScalef(2.1, 2.3, 1.0);
-    glColor3f(0, 0, 0);
-    //glutSolidSphere(0.15, 30, 20);
-    glPopMatrix();
+    glVertexAttribPointer(
+    	0,
+    	3,
+    	GL_FLOAT,
+    	GL_FALSE,
+    	6 * sizeof(GLfloat),
+    	0
+    );
 
-    glPushMatrix(); ///Collar
-    glTranslatef(4.2, 2.1, 0.0);
-    glScalef(2.1, 2.3, 1.0);
-    glColor3f(0, 0, 0);
-    //glutSolidSphere(0.15, 30, 20);
-    glPopMatrix();
+    glEnableVertexAttribArray(0);	// Habilita este atributo
 
-    glPushMatrix(); ///Collar
-    glTranslatef(4.7, 2.1, 0.0);
-    glScalef(2.1, 2.3, 1.0);
-    glColor3f(0, 0, 0);
-    //glutSolidSphere(0.15, 30, 20);
-    glPopMatrix();
+    // SHADERS DESHABILITADOS
+    glVertexAttribPointer(
+    	1,
+    	3,
+    	GL_FLOAT,
+    	GL_FALSE,
+    	6 * sizeof(GLfloat),
+    	(GLvoid*) (3 * sizeof(GLfloat))
+    );
 
-    glPushMatrix(); ///Collar
-    glTranslatef(5.1, 2.3, 0.0);
-    glScalef(2.1, 2.3, 1.0);
-    glColor3f(0, 0, 0);
-    //glutSolidSphere(0.15, 30, 20);
-    glPopMatrix();
+    glEnableVertexAttribArray(1);		// Habilita este atributo
 
-    glFlush();
+
+    glBindVertexArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    	glBindVertexArray(m_VAO);
+
 }
 
-void winReshapeFcn(GLint newWidth, GLint newHeight) {
-    glViewport(0, 0, newHeight, newHeight);
+void display(GLFWwindow* window, double currentTime) {
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
+	glClearColor(1,0,0, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
 
-    gluOrtho2D(xwcMin, xwcMax, ywcMin, ywcMax);
+	glBindVertexArray(m_VAO);
 
-    glClear(GL_COLOR_BUFFER_BIT);
+	glDrawArrays(GL_TRIANGLES, 0, 3003);
+	//glDrawArrays(GL_LINE_LOOP, 1002, 1000);
+	//glDrawElements(GL_TRIANGLES, 15 , GL_UNSIGNED_INT, 0);
+	// for (int i=1; i< 32; i++) {
+	//	 glDrawArrays(GL_LINE_LOOP, 3003*i +1, 3003);
+	 //}
+	glBindVertexArray(0);
+
 }
 
-int main(int argc, char **argv) {
-   /* glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-    glutInitWindowPosition(50, 50);
-    glutInitWindowSize(winWidth, winHeight);
-    glutCreateWindow("Lisa Bezier");
-    init();
-    glutDisplayFunc(displayFcn);
-    glutReshapeFunc(winReshapeFcn);
-    glutMainLoop();*/
+int main(void) {
+
+	// Initialise GLFW
+    if (!glfwInit()) {
+    	exit(EXIT_FAILURE);
+    }
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  //
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            //
+	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE); 	// Resizable option.
+
+    GLFWwindow* window = glfwCreateWindow(600, 600, "Tarea08", NULL, NULL);
+
+    glfwMakeContextCurrent(window);
+    if (glewInit() != GLEW_OK) {
+    	exit(EXIT_FAILURE);
+    }
+
+    glfwSwapInterval(1);
+
+    init(window);
+
+    while (!glfwWindowShouldClose(window)) {
+        display(window, glfwGetTime());
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
+
+    glfwDestroyWindow(window);
+    glfwTerminate();
+    exit(EXIT_SUCCESS);
 }
