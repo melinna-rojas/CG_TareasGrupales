@@ -44,7 +44,7 @@ public:
     GLfloat x, y, z;
 };
 
-//Estos dos ojos deben achicarse
+//Declarando los puntos de control
 ptCtrl c15[4] = {{0.5517, 0.6457}, {0.3991, 0.6280}, {0.3991, 0.9567}, {0.5517, 0.9391}}; //Ojo Completo
 ptCtrl c16[4] = {{0.5400, 0.6457}, {0.7161, 0.6280}, {0.7161, 0.9567}, {0.5517, 0.9391}};
 ptCtrl c17[4] = {{0.6457, 0.6926}, {0.7043, 0.6926}, {0.7630, 0.6809}, {0.7630, 0.6457}}; //Nariz
