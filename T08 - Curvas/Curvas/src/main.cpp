@@ -108,6 +108,11 @@ ptCtrl c47[4] = {{0.29583, 0.0739}, {0.5, 0}, {0.57769, 0.05222}, {0.57928, 0.11
 ptCtrl c48[4] = {{0.64051, -0.12184}, {0.60527, -0.03658}, {0.5684, 0.12965}, {0.56679, 0.23242}}; // Cuerpo
 ptCtrl c49[4] = {{0.22348, -0.13162}, {0.35554, -0.19543}, {0.57928, -0.19538}, {0.64051, -0.12184}}; // Cuerpo
 
+ptCtrl c50[4] = {{0.36394, 0.30153}, {1.10128, 0.57687}, {0.6454, 1.12418}, {0.3522, 1.1504}}; // Extra
+ptCtrl c51[4] = {{0.8804, 0.9978}, {0.54107, 1.09786}, {0.00292, 0.80572}, {0.67604, 0.57679}}; // Extra
+ptCtrl c52[4] = {{0.6104, 0.3991}, {0.49435, 0.66375}, {0.29118, 0.25807}, {0.5752, 0.2935}}; // Extra
+ptCtrl c53[4] = {{0.2348, 0.9391}, {0.47602, 1.06095}, {0.70667, 0.79608}, {0.35698, 0.51186}}; // Extra
+ptCtrl c54[4] = {{0.2817, 0.5048}, {0.35004, 0.49781}, {0.3504, 0.43428}, {0.2817, 0.4226}}; // Extra
 
 // Arreglos para el ojo izquierdo
 GLfloat m_V1[1503], m_V2[1503], m_V3[1503], m_V4[1503];
@@ -132,6 +137,8 @@ GLfloat m_V36[1503], m_V37[1503], m_V38[1503], m_V39[1503], m_V40[1503];
 GLfloat m_V41[1503], m_V42[1503], m_V43[1503], m_V44[1503];
 // Arreglos para el cuerpo
 GLfloat m_V45[1503], m_V46[1503], m_V47[1503], m_V48[1503], m_V49[1503];
+// Extra
+GLfloat m_V50[1503], m_V51[1503], m_V52[1503], m_V53[1503], m_V54[1503];
 
 void computeBezPt(GLfloat u, ptCtrl *bezPt, GLint nCtrlPts, ptCtrl *ctrlPts, GLint *C)
 {
@@ -243,6 +250,12 @@ void drawCurves()
 	bezier(c47, nCtrlPts, nBezCurvePts, m_V47);
 	bezier(c48, nCtrlPts, nBezCurvePts, m_V48);
 
+	bezier(c49, nCtrlPts, nBezCurvePts, m_V49);
+	bezier(c50, nCtrlPts, nBezCurvePts, m_V50);
+	bezier(c51, nCtrlPts, nBezCurvePts, m_V51);
+	bezier(c52, nCtrlPts, nBezCurvePts, m_V52);
+	bezier(c53, nCtrlPts, nBezCurvePts, m_V53);
+	bezier(c54, nCtrlPts, nBezCurvePts, m_V54);
 }
 
 void paintFigure(GLfloat m_Verts[], GLfloat m_V[], int k, float r, float g, float b)
@@ -373,6 +386,12 @@ void init(GLFWwindow *window)
     paintFigure(m_Vertices, m_V47, 37, 0.99, 0.93, 0.0);
     paintFigure(m_Vertices, m_V48, 38, 0.99, 0.93, 0.0);
 
+    paintFigure(m_Vertices, m_V49, 39, 1.0, 0.49, 0.0);
+    paintFigure(m_Vertices, m_V50, 40, 0.99, 0.93, 0.0);
+    paintFigure(m_Vertices, m_V51, 41, 0.99, 0.93, 0.0);
+    paintFigure(m_Vertices, m_V52, 42, 0.99, 0.93, 0.0);
+    paintFigure(m_Vertices, m_V53, 43, 0.99, 0.93, 0.0);
+    paintFigure(m_Vertices, m_V54, 44, 0.99, 0.93, 0.0);
 
     glGenBuffers(1, &m_VBO);
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
@@ -454,6 +473,13 @@ void display(GLFWwindow *window, double currentTime)
     glUseProgram(renderingProgram);
 
     glBindVertexArray(m_VAO);
+    // Extra
+    glDrawArrays(GL_TRIANGLE_FAN, 1503*39, 502);
+    glDrawArrays(GL_TRIANGLE_FAN, 1503*40, 501);
+    glDrawArrays(GL_TRIANGLE_FAN, 1503*41, 501);
+    glDrawArrays(GL_TRIANGLE_FAN, 1503*42, 501);
+    glDrawArrays(GL_TRIANGLE_FAN, 1503*43, 501);
+    glDrawArrays(GL_TRIANGLE_FAN, 1503*44, 501);
     // Coloreando el cabello
     glDrawArrays(GL_TRIANGLE_FAN, 1503*19, 502);
     glDrawArrays(GL_TRIANGLE_FAN, 1503*20, 502);
