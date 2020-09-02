@@ -348,28 +348,28 @@ void init(GLFWwindow *window)
     paintFigure(m_Vertices, m_V7, 6, 0.0, 0.0, 0.0);
     paintFigure(m_Vertices, m_V8, 7, 0.0, 0.0, 0.0);
 
-    paintFigure(m_Vertices, m_V17, 8, 0.99, 0.93, 0.0);
-    paintFigure(m_Vertices, m_V18, 9, 0.99, 0.93, 0.0);
+    paintFigure(m_Vertices, m_V17, 8, 0.99, 0.89, 0.12);
+    paintFigure(m_Vertices, m_V18, 9, 0.99, 0.89, 0.12);
 
-    paintFigure(m_Vertices, m_V19, 10, 0.99, 0.93, 0.0);
-    paintFigure(m_Vertices, m_V20, 11, 0.99, 0.93, 0.0);
-    paintFigure(m_Vertices, m_V21, 12, 0.99, 0.93, 0.0);
+    paintFigure(m_Vertices, m_V19, 10, 0.99, 0.89, 0.12);
+    paintFigure(m_Vertices, m_V20, 11, 0.99, 0.89, 0.12);
+    paintFigure(m_Vertices, m_V21, 12, 0.99, 0.89, 0.12);
 
-    paintFigure(m_Vertices, m_V22, 13, 0.99, 0.93, 0.0);
-    paintFigure(m_Vertices, m_V23, 14, 0.99, 0.93, 0.0);
+    paintFigure(m_Vertices, m_V22, 13, 0.99, 0.89, 0.12);
+    paintFigure(m_Vertices, m_V23, 14, 0.99, 0.89, 0.12);
 
-    paintFigure(m_Vertices, m_V24, 15, 0.99, 0.93, 0.0);
-    paintFigure(m_Vertices, m_V26, 16, 0.99, 0.93, 0.0);
-    paintFigure(m_Vertices, m_V27, 17, 0.99, 0.93, 0.0);
-    paintFigure(m_Vertices, m_V28, 18, 0.99, 0.93, 0.0);
+    paintFigure(m_Vertices, m_V24, 15, 0.99, 0.89, 0.12);
+    paintFigure(m_Vertices, m_V26, 16, 0.99, 0.89, 0.12);
+    paintFigure(m_Vertices, m_V27, 17, 0.99, 0.89, 0.12);
+    paintFigure(m_Vertices, m_V28, 18, 0.99, 0.89, 0.12);
 
-    paintFigure(m_Vertices, m_V29, 19, 0.99, 0.93, 0.0);
-    paintFigure(m_Vertices, m_V30, 20, 0.99, 0.93, 0.0);
-    paintFigure(m_Vertices, m_V31, 21, 0.99, 0.93, 0.0);
-    paintFigure(m_Vertices, m_V32, 22, 0.99, 0.93, 0.0);
-    paintFigure(m_Vertices, m_V33, 23, 0.99, 0.93, 0.0);
-    paintFigure(m_Vertices, m_V34, 24, 0.99, 0.93, 0.0);
-    paintFigure(m_Vertices, m_V35, 25, 0.99, 0.93, 0.0);
+    paintFigure(m_Vertices, m_V29, 19, 0.99, 0.89, 0.12);
+    paintFigure(m_Vertices, m_V30, 20, 0.99, 0.89, 0.12);
+    paintFigure(m_Vertices, m_V31, 21, 0.99, 0.89, 0.12);
+    paintFigure(m_Vertices, m_V32, 22, 0.99, 0.89, 0.12);
+    paintFigure(m_Vertices, m_V33, 23, 0.99, 0.89, 0.12);
+    paintFigure(m_Vertices, m_V34, 24, 0.99, 0.89, 0.12);
+    paintFigure(m_Vertices, m_V35, 25, 0.99, 0.89, 0.12);
 
     paintFigure(m_Vertices, m_V36, 26, 1.0, 1.0, 1.0);
     paintFigure(m_Vertices, m_V37, 27, 1.0, 1.0, 1.0);
@@ -381,17 +381,17 @@ void init(GLFWwindow *window)
     paintFigure(m_Vertices, m_V43, 33, 1.0, 1.0, 1.0);
     paintFigure(m_Vertices, m_V44, 34, 1.0, 1.0, 1.0);
 
-    paintFigure(m_Vertices, m_V45, 35, 0.99, 0.93, 0.0);
+    paintFigure(m_Vertices, m_V45, 35, 0.99, 0.89, 0.12);
     paintFigure(m_Vertices, m_V46, 36, 1.0, 0.49, 0.0);
-    paintFigure(m_Vertices, m_V47, 37, 0.99, 0.93, 0.0);
-    paintFigure(m_Vertices, m_V48, 38, 0.99, 0.93, 0.0);
+    paintFigure(m_Vertices, m_V47, 37, 0.99, 0.89, 0.12);
+    paintFigure(m_Vertices, m_V48, 38, 0.99, 0.89, 0.12);
 
     paintFigure(m_Vertices, m_V49, 39, 1.0, 0.49, 0.0);
-    paintFigure(m_Vertices, m_V50, 40, 0.99, 0.93, 0.0);
-    paintFigure(m_Vertices, m_V51, 41, 0.99, 0.93, 0.0);
-    paintFigure(m_Vertices, m_V52, 42, 0.99, 0.93, 0.0);
-    paintFigure(m_Vertices, m_V53, 43, 0.99, 0.93, 0.0);
-    paintFigure(m_Vertices, m_V54, 44, 0.99, 0.93, 0.0);
+    paintFigure(m_Vertices, m_V50, 40, 0.99, 0.89, 0.12);
+    paintFigure(m_Vertices, m_V51, 41, 0.99, 0.89, 0.12);
+    paintFigure(m_Vertices, m_V52, 42, 0.99, 0.89, 0.12);
+    paintFigure(m_Vertices, m_V53, 43, 0.99, 0.89, 0.12);
+    paintFigure(m_Vertices, m_V54, 44, 0.99, 0.89, 0.12);
 
     glGenBuffers(1, &m_VBO);
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
