@@ -5,7 +5,7 @@
 ![](docs/demo-conerTable.gif)
 
 ### T08 - Curvas
-- Coming soon ✌
+![](docs/curvas.gif)
 
 ## ‍🚀 Technologies
 - C++
